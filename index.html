@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汽车知识答题系统</title>
+    <style>
+        * {margin: 0;padding: 0;box-sizing: border-box;}
+        body {
+            font-family: "微软雅黑", "宋体";
+            background-color: #f0f7ff;
+            text-align: center;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        /* 答题面板整体样式 */
+        .answer-box {
+            width: 750px;
+            background: white;
+            padding: 35px 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px #d1e7ff;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #005ea6;
+            margin-bottom: 25px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        /* ★核心优化：题目区域 字体放大+分行工整+内边距充足 阅读超舒服 */
+        .question {
+            font-size: 17px;
+            color: #222;
+            line-height: 2.0;
+            margin: 15px 0 25px 0;
+            padding: 18px;
+            border-radius: 10px;
+            background-color: #f8fbff;
+            text-align: left;
+            white-space: pre-line;
+            word-wrap: break-word;
+            letter-spacing: 0.5px;
+        }
+        /* 答案输入框 */
+        .ans-input {
+            width: 400px;
+            height: 48px;
+            padding: 0 18px;
+            font-size: 18px;
+            border: 1px solid #b9d7f0;
+            border-radius: 10px;
+            margin: 5px 0 30px 0;
+            outline: none;
+        }
+        .ans-input:focus {
+            border-color: #0099ff;
+            box-shadow: 0 0 6px #b3d9ff;
+        }
+        /* 按钮美化+大小优化 */
+        button {
+            width: 125px;
+            height: 48px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            color: white;
+            cursor: pointer;
+            margin: 0 8px;
+            transition: all 0.2s;
+        }
+        button:hover {
+            opacity: 0.92;
+            transform: scale(1.03);
+        }
+        #submitBtn {background-color: #27ae60;}
+        #nextBtn {background-color: #2980b9;}
+        #exitBtn {background-color: #e74c3c;}
+        /* ★解析区域优化：字体清晰+分行+行间距舒适 */
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            line-height: 2.0;
+            min-height: 60px;
+            white-space: pre-line;
+            word-wrap: break-word;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="answer-box">
+        <h2>🎯 汽车专业知识答题系统（含解析）</h2>
+        <div class="question" id="questionArea">点击【继续抽题】获取题目</div>
+        <input type="text" class="ans-input" id="answerInput" placeholder="请输入答案（直接填写 A / B / C 即可）">
+        <br>
+        <button id="submitBtn">✅ 提交答案</button>
+        <button id="nextBtn">🔄 继续抽题</button>
+        <button id="exitBtn">❌ 结束答题</button>
+        <div class="result" id="resultArea"></div>
+    </div>
+
+    <script>
+        // ========== 【最终版汽车题库10道】选项分行工整+标准答案+详细解析 ==========
+        const questionBank = [
+            [
+                "电动汽车动力电池主流类型包括三元锂电池和磷酸铁锂电池，下列关于两者的描述中，正确的是哪一项？（ ）\nA. 三元锂电池安全性更高，低温性能更优\nB. 磷酸铁锂电池循环寿命更长，安全性更好\nC. 两者都不能支持快充技术",
+                "B",
+                "解析：1.磷酸铁锂电池化学性质稳定，循环寿命可达3000次以上，热失控温度高，安全性更好；2.三元锂电池优势是能量密度高、低温性能优，安全性偏低；3.两款电池均支持快充技术。"
+            ],
+            [
+                "汽车自动泊车功能需要通过感知设备识别车位与障碍物，以下哪项不属于该功能的核心感知设备？（ ）\nA. 超声波雷达\nB. 车载摄像头\nC. 发动机转速传感器",
+                "C",
+                "解析：自动泊车核心感知依靠超声波雷达（探测距离）和车载摄像头（识别车位线/障碍物）；发动机转速传感器仅监测发动机工况，和泊车感知无关。"
+            ],
+            [
+                "汽车排气管上的三元催化器，可将尾气中的三种有害气体转化为无害物质，这三种有害气体不包括以下哪一项？（ ）\nA. 一氧化碳\nB. 二氧化碳\nC. 氮氧化物",
+                "B",
+                "解析：三元催化器转化的是：一氧化碳、氮氧化物、碳氢化合物这3种有毒有害气体；二氧化碳是尾气常规成分，本身无毒性，无需转化。"
+            ],
+            [
+                "ESP（车身电子稳定系统）的核心作用是防止车辆失控，下列哪种极端驾驶场景下，ESP 的干预效果最明显？（ ）\nA. 车辆高速直线行驶\nB. 紧急避让障碍物时的急转弯\nC. 车辆怠速停车时",
+                "B",
+                "解析：ESP通过调节车轮制动力、限制发动机扭矩，防止车辆侧滑/甩尾；紧急急转弯时车辆极易突破抓地极限，ESP干预效果最显著，直线行驶/怠速几乎不介入。"
+            ],
+            [
+                "混合动力汽车分为插电式混合动力（PHEV）和油电混合动力（HEV），两者的核心区别在于是否具备以下哪项功能？（ ）\nA. 外接电源充电\nB. 发动机驱动车辆\nC. 能量回收功能",
+                "A",
+                "解析：核心区别是【是否支持外接电源充电】：PHEV有大容量电池，可外接充电，纯电续航长；HEV电池容量小，仅靠发动机/能量回收补电，无法外接充电。"
+            ],
+            [
+                "部分汽车采用铝合金车身替代传统钢材车身，从物理性能角度分析，铝合金的核心优势不包括以下哪一项？（ ）\nA. 密度更小，车身轻量化\nB. 硬度更高，耐撞击性更强\nC. 抗腐蚀性更好，使用寿命更长",
+                "B",
+                "解析：铝合金优势：密度仅为钢材1/3，实现轻量化降能耗、抗腐蚀性优异；缺点是硬度低于钢材，耐撞击能力偏弱，这是其短板。"
+            ],
+            [
+                "汽车语音助手能够实现 “听懂指令 — 执行操作” 的交互流程，其核心依赖的人工智能技术是以下哪一项？（ ）\nA. 自然语言处理\nB. 图像识别\nC. 区块链技术",
+                "A",
+                "解析：语音助手的核心是自然语言处理技术，实现语音指令的识别、理解和执行；图像识别用于视觉类功能，区块链与汽车语音交互无关。"
+            ],
+            [
+                "氢燃料电池汽车以氢气为燃料，通过电化学反应产生电能驱动车辆，该反应过程的主要排放物是以下哪一项？（ ）\nA. 水\nB. 二氧化碳\nC. 二氧化硫",
+                "A",
+                "解析：氢燃料电池的工作原理是氢气与氧气发生电化学反应生成电能，该反应的唯一产物和排放物就是水，属于真正的零排放新能源车型。"
+            ],
+            [
+                "汽车主动刹车系统（AEB）能在碰撞前自动制动，其核心是通过传感器探测前方障碍物，以下哪种传感器不是AEB 系统的常用传感器？（ ）\nA. 毫米波雷达\nB. 激光雷达\nC. 胎压监测传感器",
+                "C",
+                "解析：AEB常用毫米波雷达（远距离探测）+激光雷达（高精度识别）组合探测障碍物；胎压监测传感器仅监测轮胎气压，和前方障碍物探测无关。"
+            ],
+            [
+                "汽车抬头显示功能可将车速、导航等关键信息投射到驾驶员视野范围内，其主要投射载体是以下哪一项？（ ）\nA. 前挡风玻璃\nB. 车载中控屏幕\nC. 仪表盘",
+                "A",
+                "解析：抬头显示（HUD）的核心是将信息投射到前挡风玻璃，驾驶员平视即可查看，无需低头，提升行车安全；中控屏/仪表盘是常规显示设备，不属于抬头显示。"
+            ]
+        ];
+
+        let nowQuestion = "";
+        let nowAnswer = "";
+        let nowAnalysis = "";
+
+        const questionArea = document.getElementById("questionArea");
+        const answerInput = document.getElementById("answerInput");
+        const resultArea = document.getElementById("resultArea");
+        const submitBtn = document.getElementById("submitBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const exitBtn = document.getElementById("exitBtn");
+
+        // 随机抽题功能
+        function getRandomQ() {
+            const randomNum = Math.floor(Math.random() * questionBank.length);
+            nowQuestion = questionBank[randomNum][0];
+            nowAnswer = questionBank[randomNum][1];
+            nowAnalysis = questionBank[randomNum][2];
+            answerInput.value = "";
+            resultArea.innerHTML = "";
+            resultArea.style.background = "transparent";
+            questionArea.innerHTML = nowQuestion;
+        }
+
+        // 提交答案+判分+答错显示答案+解析
+        function checkAnswer() {
+            const stuAnswer = answerInput.value.trim().toUpperCase(); // 自动转大写，输入a/b/c也能识别
+            if (stuAnswer === "") {
+                resultArea.innerHTML = "⚠️ 请先输入答案再提交（直接填写 A/B/C 即可）";
+                resultArea.style.background = "#fff8e1";
+                resultArea.style.color = "#f59e0b";
+                return;
+            }
+            if (stuAnswer === nowAnswer) {
+                resultArea.innerHTML = "✅ 回答正确，太棒啦！继续加油哦～";
+                resultArea.style.background = "#e8f5e9";
+                resultArea.style.color = "#166534";
+            } else {
+                resultArea.innerHTML = "❌ 回答错误！\n✅ 标准答案：" + nowAnswer + "\n📖 " + nowAnalysis;
+                resultArea.style.background = "#fef2f2";
+                resultArea.style.color = "#991b1b";
+            }
+        }
+
+        // 结束答题功能
+        function exitSys() {
+            if (confirm("确定要结束本次答题吗？")) {
+                alert("🎉 答题结束！本次答题完成，继续积累汽车知识哦～");
+                window.close();
+            }
+        }
+
+        // 绑定按钮点击事件
+        submitBtn.onclick = checkAnswer;
+        nextBtn.onclick = getRandomQ;
+        exitBtn.onclick = exitSys;
+
+        // 页面加载自动加载第一道题
+        window.onload = getRandomQ;
+    </script>
+</body>
+</html>
