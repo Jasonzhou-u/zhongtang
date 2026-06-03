@@ -4,3 +4,4 @@ data/registrations.json
 .env
 logs/
 *.log
+.vite/
