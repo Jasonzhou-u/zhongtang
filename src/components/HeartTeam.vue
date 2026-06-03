@@ -1,13 +1,15 @@
 <template>
   <div class="heart-wall" aria-label="成长合伙人照片墙">
     <template v-for="(cell, index) in cells" :key="index">
-      <img v-if="cell" :src="photos[index % photos.length]" alt="成长合伙人照片" />
+      <img v-if="cell" :src="publicAsset(photos[index % photos.length])" alt="成长合伙人照片" />
       <span v-else></span>
     </template>
   </div>
 </template>
 
 <script setup>
+import { publicAsset } from '../utils/publicAsset'
+
 defineProps({
   photos: { type: Array, required: true }
 })

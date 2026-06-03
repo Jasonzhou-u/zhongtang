@@ -9,7 +9,7 @@
 
     <section class="section gallery-grid">
       <article v-for="view in campusViews" :key="view.title" :class="{ wide: view.wide }">
-        <img :src="view.image" :alt="view.title" />
+        <img :src="publicAsset(view.image)" :alt="view.title" />
         <div>
           <h3>{{ view.title }}</h3>
           <p>{{ view.summary }}</p>
@@ -22,4 +22,5 @@
 <script setup>
 import PageHero from '../components/PageHero.vue'
 import { campusViews } from '../data/siteData'
+import { publicAsset } from '../utils/publicAsset'
 </script>

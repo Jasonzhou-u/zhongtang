@@ -9,7 +9,7 @@
 
     <section class="section news-archive">
       <component v-for="item in newsItems" :key="item.title" :is="linkTag(item)" v-bind="linkProps(item)" class="archive-row">
-        <img :src="item.image || '/static/image/school/cafe.jpg'" :alt="item.title" />
+        <img :src="publicAsset(item.image || '/static/image/school/cafe.jpg')" :alt="item.title" />
         <div>
           <span v-if="item.type === 'signup'">活动报名</span>
           <span v-else-if="item.type === 'activity'">活动原文</span>
@@ -26,6 +26,7 @@
 <script setup>
 import PageHero from '../components/PageHero.vue'
 import { newsItems } from '../data/siteData'
+import { publicAsset } from '../utils/publicAsset'
 
 function linkTag(item) {
   return item.href ? 'a' : 'RouterLink'

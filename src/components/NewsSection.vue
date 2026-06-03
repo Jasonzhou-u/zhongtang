@@ -10,7 +10,7 @@
 
     <div class="news-grid">
       <component :is="linkTag(featured)" v-bind="linkProps(featured)" class="feature-news">
-        <img :src="featured.image || '/static/image/school/cafe.jpg'" :alt="featured.title" />
+        <img :src="publicAsset(featured.image || '/static/image/school/cafe.jpg')" :alt="featured.title" />
         <div>
           <time>{{ featured.date }}</time>
           <h3>{{ featured.title }}</h3>
@@ -20,7 +20,7 @@
 
       <div class="news-list">
         <component v-for="item in listItems" :key="item.title" :is="linkTag(item)" v-bind="linkProps(item)" class="news-row">
-          <img :src="item.image || '/static/image/school/cafe.jpg'" :alt="item.title" />
+          <img :src="publicAsset(item.image || '/static/image/school/cafe.jpg')" :alt="item.title" />
           <div>
             <strong>{{ item.title }}</strong>
             <time>{{ item.date }}</time>
@@ -33,6 +33,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { publicAsset } from '../utils/publicAsset'
 
 const props = defineProps({
   items: { type: Array, required: true }

@@ -13,7 +13,7 @@
 
     <div ref="track" class="past-track">
       <RouterLink v-for="event in events" :key="event.title" :to="event.to" class="past-card">
-        <img :src="event.image" :alt="event.title" />
+        <img :src="publicAsset(event.image)" :alt="event.title" />
         <div>
           <time>{{ event.date }}</time>
           <h3>{{ event.title }}</h3>
@@ -26,6 +26,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { publicAsset } from '../utils/publicAsset'
 
 defineProps({
   events: { type: Array, required: true }

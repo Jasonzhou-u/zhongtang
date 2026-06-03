@@ -14,7 +14,7 @@
       </div>
       <div class="activity-grid">
         <article v-for="activity in openActivities" :key="activity.id" class="activity-card">
-          <img :src="activity.image" :alt="activity.title" />
+          <img :src="publicAsset(activity.image)" :alt="activity.title" />
           <div>
             <time>{{ activity.date }}</time>
             <h3>{{ activity.title }}</h3>
@@ -33,4 +33,5 @@
 import PageHero from '../components/PageHero.vue'
 import PastEventsSlider from '../components/PastEventsSlider.vue'
 import { openActivities, pastActivities } from '../data/siteData'
+import { publicAsset } from '../utils/publicAsset'
 </script>

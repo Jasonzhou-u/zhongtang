@@ -1,5 +1,5 @@
 <template>
-  <section class="page-hero" :style="{ backgroundImage: `linear-gradient(90deg, rgba(18, 47, 50, .82), rgba(18, 47, 50, .26)), url(${image})` }">
+  <section class="page-hero" :style="{ backgroundImage: `linear-gradient(90deg, rgba(18, 47, 50, .82), rgba(18, 47, 50, .26)), url(${publicAsset(image)})` }">
     <div class="page-hero-inner">
       <span>{{ eyebrow }}</span>
       <h1>{{ title }}</h1>
@@ -9,6 +9,8 @@
 </template>
 
 <script setup>
+import { publicAsset } from '../utils/publicAsset'
+
 defineProps({
   title: { type: String, required: true },
   eyebrow: { type: String, default: '' },

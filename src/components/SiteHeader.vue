@@ -1,7 +1,7 @@
 <template>
   <header class="site-header">
     <RouterLink class="brand" to="/" aria-label="北京十一学校中堂实验学校首页">
-      <img src="/static/image/学校logo.png" alt="北京十一学校中堂实验学校" />
+      <img :src="publicAsset('/static/image/学校logo.png')" alt="北京十一学校中堂实验学校" />
       <strong>北京十一学校中堂实验学校</strong>
     </RouterLink>
 
@@ -33,6 +33,7 @@
 <script setup>
 import { ref } from 'vue'
 import { navItems, platformLinks } from '../data/siteData'
+import { publicAsset } from '../utils/publicAsset'
 
 const open = ref(false)
 const loginOpen = ref(false)

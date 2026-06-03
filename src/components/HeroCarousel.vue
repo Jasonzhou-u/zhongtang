@@ -1,7 +1,7 @@
 <template>
   <section class="hero-carousel" @mouseenter="pause" @mouseleave="resume">
     <article v-for="(slide, index) in slides" :key="slide.title" class="hero-slide" :class="{ active: index === active }">
-      <img :src="slide.image" :alt="slide.title" />
+      <img :src="publicAsset(slide.image)" :alt="slide.title" />
       <div class="hero-copy">
         <span>{{ slide.eyebrow }}</span>
         <h1>{{ slide.title }}</h1>
@@ -18,6 +18,7 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { publicAsset } from '../utils/publicAsset'
 
 const props = defineProps({
   slides: { type: Array, required: true }

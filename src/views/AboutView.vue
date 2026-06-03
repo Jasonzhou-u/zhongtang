@@ -14,7 +14,7 @@
         <p>北京十一学校中堂实验学校以学习者成长为中心，将课程、空间、活动、导师和家校资源组织成支持学生发展的生态系统，让每个学生在真实情境中发现热爱、建立能力、形成责任。</p>
         <p>学校重视基础性课程的扎实支撑，也鼓励研究性、拓展性课程打开学生的选择空间。学习不只发生在教室，也发生在公共空间、社群活动、项目展示和日常对话里。</p>
       </div>
-      <img class="content-image" src="/static/image/brochure/brochure-page-1.png" alt="学校手册内容" />
+      <img class="content-image" :src="publicAsset('/static/image/brochure/brochure-page-1.png')" alt="学校手册内容" />
     </section>
 
     <section class="section value-band">
@@ -41,7 +41,7 @@
     </section>
 
     <section class="section two-column reverse">
-      <img class="content-image" src="/static/image/brochure/brochure-page-2.png" alt="课程与学习社区手册内容" />
+      <img class="content-image" :src="publicAsset('/static/image/brochure/brochure-page-2.png')" alt="课程与学习社区手册内容" />
       <div class="rich-copy">
         <span class="eyebrow">LEARNING COMMUNITY</span>
         <h2>多元课程与学习社区</h2>
@@ -54,4 +54,5 @@
 
 <script setup>
 import PageHero from '../components/PageHero.vue'
+import { publicAsset } from '../utils/publicAsset'
 </script>
