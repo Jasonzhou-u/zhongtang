@@ -83,7 +83,7 @@ npm start
 
 ## GitHub 代码管理与 Pages 部署
 
-建议仓库名使用 `zt_website`。项目已配置 `.github/workflows/deploy-pages.yml`，推送到 GitHub 的 `main` 分支后会自动构建并发布到 GitHub Pages。
+当前仓库名使用 `zhongtang`。项目已配置 `.github/workflows/deploy-pages.yml`，推送到 GitHub 的 `main` 分支后会自动构建并发布到 GitHub Pages。
 
 第一次上传代码：
 
@@ -92,7 +92,7 @@ git init
 git add .
 git commit -m "init zhongtang school website"
 git branch -M main
-git remote add origin https://github.com/你的用户名/zt_website.git
+git remote add origin https://github.com/Jasonzhou-u/zhongtang.git
 git push -u origin main
 ```
 
@@ -105,7 +105,7 @@ Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
 部署完成后访问：
 
 ```text
-https://你的用户名.github.io/zt_website/
+https://Jasonzhou-u.github.io/zhongtang/
 ```
 
 日常同步代码：
