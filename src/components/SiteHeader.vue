@@ -1,8 +1,7 @@
 <template>
   <header class="site-header">
     <RouterLink class="brand" to="/" aria-label="北京十一学校中堂实验学校首页">
-      <img :src="publicAsset('/static/image/学校logo.png')" alt="北京十一学校中堂实验学校" />
-      <strong>北京十一学校中堂实验学校</strong>
+      <img :src="publicAsset('/static/image/school-logo-cropped.png')" alt="北京十一学校中堂实验学校" />
     </RouterLink>
 
     <button class="nav-toggle" type="button" @click="open = !open" aria-label="打开导航">

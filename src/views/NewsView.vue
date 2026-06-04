@@ -3,46 +3,54 @@
     <PageHero
       title="新闻动态"
       eyebrow="NEWS"
-      summary="浏览学校公众号发布的校园新闻、课程故事与活动信息。"
+      summary="集中浏览学校新闻、公众号原文、站内发布和活动报名入口。"
       image="/static/image/school/cafe.jpg"
     />
 
     <section class="section news-archive">
-      <component v-for="item in newsItems" :key="item.title" :is="linkTag(item)" v-bind="linkProps(item)" class="archive-row">
+      <div class="news-toolbar">
+        <div>
+          <strong>新闻中心</strong>
+          <p>共 {{ sortedNewsItems.length }} 条，当前显示 {{ visibleItems.length }} 条。</p>
+        </div>
+      </div>
+
+      <component
+        v-for="item in visibleItems"
+        :key="item.id"
+        :is="getNewsLinkTag(item)"
+        v-bind="getNewsLinkProps(item)"
+        class="archive-row"
+      >
         <img :src="publicAsset(item.image || '/static/image/school/cafe.jpg')" :alt="item.title" />
         <div>
-          <span v-if="item.type === 'signup'">活动报名</span>
-          <span v-else-if="item.type === 'activity'">活动原文</span>
-          <span v-else>公众号原文</span>
+          <span>{{ getNewsBadge(item) }}</span>
           <h2>{{ item.title }}</h2>
           <time>{{ item.date }}</time>
-          <p>{{ item.summary || '点击查看学校公众号原文。' }}</p>
+          <p>{{ item.summary || '点击查看学校新闻详情。' }}</p>
         </div>
       </component>
+
+      <button v-if="hasMore" class="load-more-button" type="button" @click="visibleCount += NEWS_PAGE_SIZE">
+        加载更多
+      </button>
     </section>
   </main>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import PageHero from '../components/PageHero.vue'
-import { newsItems } from '../data/siteData'
+import {
+  NEWS_PAGE_SIZE,
+  getNewsBadge,
+  getNewsLinkProps,
+  getNewsLinkTag,
+  sortedNewsItems
+} from '../data/newsData'
 import { publicAsset } from '../utils/publicAsset'
 
-function linkTag(item) {
-  return item.href ? 'a' : 'RouterLink'
-}
-
-function linkProps(item) {
-  if (item.href) {
-    return {
-      href: item.href,
-      target: '_blank',
-      rel: 'noopener noreferrer'
-    }
-  }
-
-  return {
-    to: item.query ? { path: item.to, query: item.query } : item.to
-  }
-}
+const visibleCount = ref(NEWS_PAGE_SIZE)
+const visibleItems = computed(() => sortedNewsItems.slice(0, visibleCount.value))
+const hasMore = computed(() => visibleCount.value < sortedNewsItems.length)
 </script>

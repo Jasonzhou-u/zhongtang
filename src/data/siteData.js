@@ -40,54 +40,6 @@ export const heroSlides = [
   }
 ]
 
-export const newsItems = [
-  {
-    date: '2026.06.02',
-    title: '看见你，照亮我们 | 中堂首届同伴关系日，我们把“朋友”两个字重新讲了一遍',
-    summary: '同伴关系日以真实表达和彼此看见为主题，引导学生重新理解朋友、陪伴与共同成长。',
-    image: '/static/image/news/news-1.jpg',
-    href: 'https://mp.weixin.qq.com/s/H-bxlyXAr-a5wuZZiHl6ZA'
-  },
-  {
-    date: '2026.05.29',
-    title: '中堂微品课 | 撤出“标准答案”，三顾“高阶思维”',
-    summary: '课堂从标准答案中后退一步，让学生在追问、辨析和迁移中抵达更高阶的思维。',
-    image: '/static/image/news/news-2.jpg',
-    href: 'https://mp.weixin.qq.com/s/BkBtGYD_k_UgTo6a1mURIQ'
-  },
-  {
-    date: '2026.05.28',
-    title: '趣荟中堂 | 从赛场到成长：两位堂主的机器人进阶之路',
-    summary: '两位学生讲述机器人学习与竞赛经历，呈现兴趣、技术和坚持如何互相点亮。',
-    image: '/static/image/news/news-3.jpg',
-    href: 'https://mp.weixin.qq.com/s/bIHkuhRoYThBGO5nfvDgPA'
-  },
-  {
-    date: '2026.05.25',
-    title: '『青衿启志 蓄智待发』“展示”是学习的一种高阶样态——为何说“无展示、不项目”？',
-    summary: '从项目学习的展示环节出发，讨论展示如何推动学生完成表达、反思和深度建构。',
-    image: '/static/image/news/news-4.jpg',
-    href: 'https://mp.weixin.qq.com/s/rwGAl3LDtpRah1oOPlvQ3A'
-  },
-  {
-    date: '2026.05.19',
-    title: '趣荟中堂 | 毕业礼服设计小队等你来',
-    summary: '面向学生招募毕业礼服设计小队，把创意、审美和校园仪式感变成真实作品。',
-    image: '/static/image/news/news-5.jpg',
-    to: '/signup',
-    query: { activity: '毕业礼服设计小队招募' },
-    type: 'signup'
-  },
-  {
-    date: '2026.05.19',
-    title: '毕业礼服设计小队报名原文',
-    summary: '查看公众号原文，了解毕业礼服设计小队的招募要求与参与方式。',
-    image: '/static/image/news/news-5.jpg',
-    href: 'https://mp.weixin.qq.com/s/j1na8qQk0O9mSDRSROvBmA',
-    type: 'activity'
-  }
-]
-
 export const openActivities = [
   {
     id: 'wechat-latest-signup',
@@ -120,11 +72,41 @@ export const openActivities = [
 ]
 
 export const pastActivities = [
-  { date: '2026.03.18', title: '学生原创作品开放展', summary: '在美术馆空间集中呈现学生绘画、装置与影像作品，让表达被更多人看见。', image: '/static/image/school/gallery.jpg', to: '/views' },
-  { date: '2026.03.05', title: '中糖咖啡屋圆桌分享', summary: '学生、导师与家长围坐交流学习社区建设中的真实体验和成长故事。', image: '/static/image/school/cafe.jpg', to: '/partners' },
-  { date: '2026.02.26', title: '研究性课程成果汇报', summary: '围绕真实问题开展小组研究，学生以展板、演示和答辩完成学习成果发布。', image: '/static/image/school/classroom.jpg', to: '/about' },
-  { date: '2026.01.16', title: '学习社区开放走读', summary: '走进青蹊 Soho、学科教室与公共空间，观察学习如何在校园各处自然发生。', image: '/static/image/school/soho.jpg', to: '/views' },
-  { date: '2025.12.20', title: '体育健康嘉年华', summary: '以运动挑战、团队协作和健康知识闯关，记录学生在身体与意志上的成长。', image: '/static/image/school/gym.jpg', to: '/views' }
+  {
+    date: '2026.03.18',
+    title: '学生原创作品开放展',
+    summary: '在美术馆空间集中呈现学生绘画、装置与影像作品，让表达被更多人看见。',
+    image: '/static/image/school/gallery.jpg',
+    to: '/views'
+  },
+  {
+    date: '2026.03.05',
+    title: '中糖咖啡屋圆桌分享',
+    summary: '学生、导师与家长围坐交流学习社区建设中的真实体验和成长故事。',
+    image: '/static/image/school/cafe.jpg',
+    to: '/partners'
+  },
+  {
+    date: '2026.02.26',
+    title: '研究性课程成果汇报',
+    summary: '围绕真实问题开展小组研究，学生以展板、演示和答辩完成学习成果发布。',
+    image: '/static/image/school/classroom.jpg',
+    to: '/about'
+  },
+  {
+    date: '2026.01.16',
+    title: '学习社区开放走读',
+    summary: '走进青蹊 Soho、学科教室与公共空间，观察学习如何在校园各处自然发生。',
+    image: '/static/image/school/soho.jpg',
+    to: '/views'
+  },
+  {
+    date: '2025.12.20',
+    title: '体育健康嘉年华',
+    summary: '以运动挑战、团队协作和健康知识闯关，记录学生在身体与意志上的成长。',
+    image: '/static/image/school/gym.jpg',
+    to: '/views'
+  }
 ]
 
 export const campusViews = [

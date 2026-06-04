@@ -4,23 +4,30 @@
       title="堂中雅景"
       eyebrow="CAMPUS VIEWS"
       summary="学习发生在教室，也发生在每一个可以停留、表达、合作和创造的角落。"
-      image="/static/image/school/campus-overview.jpg"
+      image="/static/image/spaces/corridor/corridor-1.jpg"
     />
 
     <section class="section gallery-grid">
-      <article v-for="view in campusViews" :key="view.title" :class="{ wide: view.wide }">
+      <RouterLink
+        v-for="view in campusSpaces"
+        :key="view.slug"
+        class="view-card"
+        :class="{ wide: view.wide }"
+        :to="{ name: 'space-detail', params: { slug: view.slug } }"
+      >
         <img :src="publicAsset(view.image)" :alt="view.title" />
         <div>
           <h3>{{ view.title }}</h3>
           <p>{{ view.summary }}</p>
+          <span>进入空间</span>
         </div>
-      </article>
+      </RouterLink>
     </section>
   </main>
 </template>
 
 <script setup>
 import PageHero from '../components/PageHero.vue'
-import { campusViews } from '../data/siteData'
+import { campusSpaces } from '../data/campusSpaces'
 import { publicAsset } from '../utils/publicAsset'
 </script>
