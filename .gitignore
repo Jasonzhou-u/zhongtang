@@ -1,6 +1,8 @@
 node_modules/
 dist/
 data/registrations.json
+data/content.json
+public/uploads/
 .env
 logs/
 *.log

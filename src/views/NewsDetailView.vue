@@ -32,10 +32,22 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import PageHero from '../components/PageHero.vue'
 import { findInternalNews } from '../data/newsData'
+import { getContentNews } from '../services/api'
 
 const route = useRoute()
-const news = findInternalNews(route.params.slug)
+const news = ref(findInternalNews(route.params.slug))
+
+onMounted(async () => {
+  try {
+    const data = await getContentNews()
+    const found = data.news?.find((item) => (item.slug || item.id) === route.params.slug && item.source === 'internal')
+    if (found) news.value = found
+  } catch {
+    news.value = findInternalNews(route.params.slug)
+  }
+})
 </script>

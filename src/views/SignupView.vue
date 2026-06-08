@@ -13,7 +13,7 @@
           <span>报名活动</span>
           <select v-model="form.activity" required>
             <option value="" disabled>请选择活动</option>
-            <option v-for="activity in openActivities" :key="activity.id" :value="activity.title">{{ activity.title }}</option>
+            <option v-for="activity in activeOpenActivities" :key="activity.id" :value="activity.title">{{ activity.title }}</option>
           </select>
         </label>
         <label>
@@ -40,22 +40,32 @@
 </template>
 
 <script setup>
-import { reactive, ref, watchEffect } from 'vue'
+import { onMounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import PageHero from '../components/PageHero.vue'
 import { openActivities } from '../data/siteData'
-import { submitRegistration } from '../services/api'
+import { getContentActivities, submitRegistration } from '../services/api'
 
 const route = useRoute()
 const loading = ref(false)
 const message = ref('')
 const error = ref(false)
+const activeOpenActivities = ref(openActivities)
 const form = reactive({
   activity: '',
   name: '',
   className: '',
   phone: '',
   note: ''
+})
+
+onMounted(async () => {
+  try {
+    const data = await getContentActivities()
+    activeOpenActivities.value = data.open?.length ? data.open : openActivities
+  } catch {
+    activeOpenActivities.value = openActivities
+  }
 })
 
 watchEffect(() => {

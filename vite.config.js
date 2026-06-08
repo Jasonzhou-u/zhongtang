@@ -8,7 +8,8 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5510,
     proxy: {
-      '/api': 'http://127.0.0.1:5511'
+      '/api': 'http://127.0.0.1:5511',
+      '/uploads': 'http://127.0.0.1:5511'
     }
   }
 })

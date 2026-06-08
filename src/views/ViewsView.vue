@@ -9,7 +9,7 @@
 
     <section class="section gallery-grid">
       <RouterLink
-        v-for="view in campusSpaces"
+        v-for="view in activeCampusSpaces"
         :key="view.slug"
         class="view-card"
         :class="{ wide: view.wide }"
@@ -27,7 +27,20 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import PageHero from '../components/PageHero.vue'
 import { campusSpaces } from '../data/campusSpaces'
+import { getContentSpaces } from '../services/api'
 import { publicAsset } from '../utils/publicAsset'
+
+const activeCampusSpaces = ref(campusSpaces)
+
+onMounted(async () => {
+  try {
+    const data = await getContentSpaces()
+    activeCampusSpaces.value = data.spaces?.length ? data.spaces : campusSpaces
+  } catch {
+    activeCampusSpaces.value = campusSpaces
+  }
+})
 </script>

@@ -39,11 +39,23 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import PageHero from '../components/PageHero.vue'
 import { findCampusSpace } from '../data/campusSpaces'
+import { getContentSpaces } from '../services/api'
 import { publicAsset } from '../utils/publicAsset'
 
 const route = useRoute()
-const space = findCampusSpace(route.params.slug)
+const space = ref(findCampusSpace(route.params.slug))
+
+onMounted(async () => {
+  try {
+    const data = await getContentSpaces()
+    const found = data.spaces?.find((item) => item.slug === route.params.slug)
+    if (found) space.value = found
+  } catch {
+    space.value = findCampusSpace(route.params.slug)
+  }
+})
 </script>

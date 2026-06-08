@@ -5,6 +5,11 @@ import { fileURLToPath } from 'node:url'
 import dotenv from 'dotenv'
 import express from 'express'
 
+import { campusSpaces } from '../src/data/campusSpaces.js'
+import { newsItems } from '../src/data/newsData.js'
+import { heroSlides, openActivities, pastActivities } from '../src/data/siteData.js'
+import { teacherPhotos } from '../src/data/teacherData.js'
+
 dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
@@ -15,26 +20,98 @@ const adminUsername = process.env.ADMIN_USERNAME || 'admin'
 const adminPassword = process.env.ADMIN_PASSWORD || 'zt2026'
 const sessionSecret = process.env.SESSION_SECRET || 'dev-secret-change-me'
 const databasePath = path.resolve(rootDir, process.env.DATABASE_PATH || './data/registrations.json')
+const contentPath = path.resolve(rootDir, process.env.CONTENT_PATH || './data/content.json')
+const uploadDir = path.resolve(rootDir, './public/uploads')
 
 fs.mkdirSync(path.dirname(databasePath), { recursive: true })
+fs.mkdirSync(path.dirname(contentPath), { recursive: true })
+fs.mkdirSync(uploadDir, { recursive: true })
 
-function readRegistrations() {
-  if (!fs.existsSync(databasePath)) return []
-  try {
-    const content = fs.readFileSync(databasePath, 'utf8')
-    const rows = JSON.parse(content)
-    return Array.isArray(rows) ? rows : []
-  } catch {
-    return []
+function withContentMeta(items = []) {
+  return items.map((item, index) => ({
+    ...item,
+    published: item.published !== false,
+    order: Number.isFinite(item.order) ? item.order : index + 1
+  }))
+}
+
+function defaultContent() {
+  return {
+    home: {
+      heroSlides: withContentMeta(heroSlides)
+    },
+    news: withContentMeta(newsItems),
+    activities: {
+      open: withContentMeta(openActivities),
+      past: withContentMeta(pastActivities)
+    },
+    spaces: withContentMeta(campusSpaces),
+    teachers: withContentMeta(teacherPhotos),
+    settings: {
+      address: '北京市丰台区梅市口路2号院',
+      postcode: '100161',
+      email: 'bndszes@126.com',
+      wechatQr: '/static/image/wechat-qr-cropped.png',
+      icp: '京ICP备00000000号-1',
+      police: '京公网安备 11000000000000号'
+    }
   }
 }
 
+function normalizeContent(raw = {}) {
+  const seed = defaultContent()
+  return {
+    home: {
+      heroSlides: withContentMeta(raw.home?.heroSlides?.length ? raw.home.heroSlides : seed.home.heroSlides)
+    },
+    news: withContentMeta(raw.news?.length ? raw.news : seed.news),
+    activities: {
+      open: withContentMeta(raw.activities?.open?.length ? raw.activities.open : seed.activities.open),
+      past: withContentMeta(raw.activities?.past?.length ? raw.activities.past : seed.activities.past)
+    },
+    spaces: withContentMeta(raw.spaces?.length ? raw.spaces : seed.spaces),
+    teachers: withContentMeta(raw.teachers?.length ? raw.teachers : seed.teachers),
+    settings: { ...seed.settings, ...(raw.settings || {}) }
+  }
+}
+
+function readJson(filePath, fallback) {
+  if (!fs.existsSync(filePath)) return fallback
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    return JSON.parse(content)
+  } catch {
+    return fallback
+  }
+}
+
+function writeJson(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8')
+}
+
+function readRegistrations() {
+  const rows = readJson(databasePath, [])
+  return Array.isArray(rows) ? rows : []
+}
+
 function writeRegistrations(rows) {
-  fs.writeFileSync(databasePath, JSON.stringify(rows, null, 2), 'utf8')
+  writeJson(databasePath, rows)
+}
+
+function readContent() {
+  const raw = readJson(contentPath, null)
+  const content = normalizeContent(raw || defaultContent())
+  if (!raw) writeContent(content)
+  return content
+}
+
+function writeContent(content) {
+  writeJson(contentPath, normalizeContent(content))
 }
 
 const app = express()
-app.use(express.json({ limit: '1mb' }))
+app.use(express.json({ limit: '12mb' }))
+app.use('/uploads', express.static(uploadDir))
 
 function parseCookies(cookieHeader = '') {
   return Object.fromEntries(
@@ -87,6 +164,154 @@ function requireAdmin(req, res, next) {
 function cleanString(value) {
   return String(value ?? '').trim()
 }
+
+function sortPublished(items = []) {
+  return items
+    .filter((item) => item.published !== false)
+    .sort((a, b) => Number(a.order || 9999) - Number(b.order || 9999))
+}
+
+function sortNews(items = []) {
+  return sortPublished(items).sort((a, b) => Number(String(b.date || '').replaceAll('.', '')) - Number(String(a.date || '').replaceAll('.', '')))
+}
+
+function getCollection(content, type) {
+  const map = {
+    news: content.news,
+    openActivities: content.activities.open,
+    pastActivities: content.activities.past,
+    spaces: content.spaces,
+    teachers: content.teachers,
+    heroSlides: content.home.heroSlides
+  }
+  return map[type]
+}
+
+function setCollection(content, type, rows) {
+  if (type === 'news') content.news = rows
+  if (type === 'openActivities') content.activities.open = rows
+  if (type === 'pastActivities') content.activities.past = rows
+  if (type === 'spaces') content.spaces = rows
+  if (type === 'teachers') content.teachers = rows
+  if (type === 'heroSlides') content.home.heroSlides = rows
+}
+
+function ensureItem(raw, type) {
+  const item = { ...raw }
+  item.id = cleanString(item.id) || cleanString(item.slug) || crypto.randomUUID()
+  if (type === 'spaces') item.slug = cleanString(item.slug) || item.id
+  item.title = cleanString(item.title || item.name || '未命名内容')
+  item.published = item.published !== false
+  item.order = Number.isFinite(Number(item.order)) ? Number(item.order) : 999
+  return item
+}
+
+app.get('/api/content/home', (_req, res) => {
+  const content = readContent()
+  res.json({
+    heroSlides: sortPublished(content.home.heroSlides),
+    settings: content.settings
+  })
+})
+
+app.get('/api/content/news', (_req, res) => {
+  const content = readContent()
+  res.json({ news: sortNews(content.news) })
+})
+
+app.get('/api/content/activities', (_req, res) => {
+  const content = readContent()
+  res.json({
+    open: sortPublished(content.activities.open),
+    past: sortPublished(content.activities.past)
+  })
+})
+
+app.get('/api/content/spaces', (_req, res) => {
+  const content = readContent()
+  res.json({ spaces: sortPublished(content.spaces) })
+})
+
+app.get('/api/content/teachers', (_req, res) => {
+  const content = readContent()
+  res.json({ teachers: sortPublished(content.teachers) })
+})
+
+app.get('/api/admin/content', requireAdmin, (_req, res) => {
+  res.json({ content: readContent() })
+})
+
+app.put('/api/admin/content/settings', requireAdmin, (req, res) => {
+  const content = readContent()
+  content.settings = { ...content.settings, ...(req.body || {}) }
+  writeContent(content)
+  res.json({ ok: true, settings: content.settings })
+})
+
+app.post('/api/admin/content/:type', requireAdmin, (req, res) => {
+  const content = readContent()
+  const rows = getCollection(content, req.params.type)
+  if (!rows) {
+    res.status(404).json({ message: '内容类型不存在' })
+    return
+  }
+  const item = ensureItem(req.body, req.params.type)
+  rows.unshift(item)
+  setCollection(content, req.params.type, rows)
+  writeContent(content)
+  res.status(201).json({ ok: true, item })
+})
+
+app.put('/api/admin/content/:type/:id', requireAdmin, (req, res) => {
+  const content = readContent()
+  const rows = getCollection(content, req.params.type)
+  if (!rows) {
+    res.status(404).json({ message: '内容类型不存在' })
+    return
+  }
+  const index = rows.findIndex((item) => String(item.id || item.slug) === req.params.id)
+  if (index === -1) {
+    res.status(404).json({ message: '内容不存在' })
+    return
+  }
+  const nextItem = ensureItem({ ...rows[index], ...req.body, id: rows[index].id }, req.params.type)
+  rows.splice(index, 1, nextItem)
+  setCollection(content, req.params.type, rows)
+  writeContent(content)
+  res.json({ ok: true, item: nextItem })
+})
+
+app.delete('/api/admin/content/:type/:id', requireAdmin, (req, res) => {
+  const content = readContent()
+  const rows = getCollection(content, req.params.type)
+  if (!rows) {
+    res.status(404).json({ message: '内容类型不存在' })
+    return
+  }
+  setCollection(
+    content,
+    req.params.type,
+    rows.filter((item) => String(item.id || item.slug) !== req.params.id)
+  )
+  writeContent(content)
+  res.json({ ok: true })
+})
+
+app.post('/api/admin/upload', requireAdmin, (req, res) => {
+  const dataUrl = cleanString(req.body.dataUrl)
+  const originalName = cleanString(req.body.name || 'upload.png')
+  const match = dataUrl.match(/^data:(image\/(?:png|jpe?g|webp|gif));base64,(.+)$/)
+  if (!match) {
+    res.status(400).json({ message: '请上传 png、jpg、webp 或 gif 图片' })
+    return
+  }
+
+  const extMap = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' }
+  const ext = extMap[match[1]] || path.extname(originalName).replace('.', '') || 'png'
+  const filename = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`
+  fs.writeFileSync(path.join(uploadDir, filename), Buffer.from(match[2], 'base64'))
+  res.status(201).json({ ok: true, url: `/uploads/${filename}` })
+})
 
 app.post('/api/registrations', (req, res) => {
   const activity = cleanString(req.body.activity)

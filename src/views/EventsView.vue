@@ -13,7 +13,7 @@
         <h2>正在报名</h2>
       </div>
       <div class="activity-grid">
-        <article v-for="activity in openActivities" :key="activity.id" class="activity-card">
+        <article v-for="activity in activeOpenActivities" :key="activity.id" class="activity-card">
           <img :src="publicAsset(activity.image)" :alt="activity.title" />
           <div>
             <time>{{ activity.date }}</time>
@@ -25,13 +25,29 @@
       </div>
     </section>
 
-    <PastEventsSlider :events="pastActivities" />
+    <PastEventsSlider :events="activePastActivities" />
   </main>
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import PageHero from '../components/PageHero.vue'
 import PastEventsSlider from '../components/PastEventsSlider.vue'
 import { openActivities, pastActivities } from '../data/siteData'
+import { getContentActivities } from '../services/api'
 import { publicAsset } from '../utils/publicAsset'
+
+const activeOpenActivities = ref(openActivities)
+const activePastActivities = ref(pastActivities)
+
+onMounted(async () => {
+  try {
+    const data = await getContentActivities()
+    activeOpenActivities.value = data.open?.length ? data.open : openActivities
+    activePastActivities.value = data.past?.length ? data.past : pastActivities
+  } catch {
+    activeOpenActivities.value = openActivities
+    activePastActivities.value = pastActivities
+  }
+})
 </script>

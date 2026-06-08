@@ -11,7 +11,7 @@
       <div class="news-toolbar">
         <div>
           <strong>新闻中心</strong>
-          <p>共 {{ sortedNewsItems.length }} 条，当前显示 {{ visibleItems.length }} 条。</p>
+          <p>共 {{ activeNewsItems.length }} 条，当前显示 {{ visibleItems.length }} 条。</p>
         </div>
       </div>
 
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import PageHero from '../components/PageHero.vue'
 import {
   NEWS_PAGE_SIZE,
@@ -48,9 +48,20 @@ import {
   getNewsLinkTag,
   sortedNewsItems
 } from '../data/newsData'
+import { getContentNews } from '../services/api'
 import { publicAsset } from '../utils/publicAsset'
 
 const visibleCount = ref(NEWS_PAGE_SIZE)
-const visibleItems = computed(() => sortedNewsItems.slice(0, visibleCount.value))
-const hasMore = computed(() => visibleCount.value < sortedNewsItems.length)
+const activeNewsItems = ref(sortedNewsItems)
+const visibleItems = computed(() => activeNewsItems.value.slice(0, visibleCount.value))
+const hasMore = computed(() => visibleCount.value < activeNewsItems.value.length)
+
+onMounted(async () => {
+  try {
+    const data = await getContentNews()
+    activeNewsItems.value = data.news?.length ? data.news : sortedNewsItems
+  } catch {
+    activeNewsItems.value = sortedNewsItems
+  }
+})
 </script>

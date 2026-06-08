@@ -108,7 +108,7 @@ export function getNewsLinkProps(item) {
 
   if (item.source === 'signup') {
     return {
-      to: item.query ? { path: item.to, query: item.query } : item.to
+      to: item.query ? { path: item.to || '/signup', query: item.query } : item.to || '/signup'
     }
   }
 
